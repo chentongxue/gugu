@@ -1,0 +1,6 @@
+env/
+*.py[co]
+*.cfg
+.idea/
+.DS_Store
+
