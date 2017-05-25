@@ -1,4 +1,4 @@
-from application.gate import Application
+from gate import Application
 
 
 app = Application('config.cfg')

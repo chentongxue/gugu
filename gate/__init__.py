@@ -1,17 +1,16 @@
 # coding=utf-8
-import sys
 import logging
+import sys
 
 import tornado
+import tornado.httpserver
+import tornado.ioloop
 import tornado.log
 import tornado.web
-import tornado.ioloop
-import tornado.httpserver
-from tornado.options import options
 import tornado.websocket
-
 from application.utils.config_parser import ConfigParser
-from application.handlers.rpc import RPCHandler
+from gate.handlers.rpc import RPCHandler
+from tornado.options import options
 
 
 def setup_logging_to_stream(stream, log_level):
@@ -33,11 +32,13 @@ def setup_logging(log_level=None):
     setup_logging_to_stream(stream=sys.stderr, log_level=logging.ERROR)
 
 
+# TODO 使用同一个application启动net, gate, node
 class Application(tornado.web.Application):
     def __init__(self, cfg):
         settings = ConfigParser(cfg)
+        from .handlers.frontend import TestWebHandler
         super(Application, self).__init__(
-            handlers=[('/rpc', RPCHandler)],
+            handlers=[('/rpc', RPCHandler), ('/', TestWebHandler)],
             autoreload=settings.get('DEBUG'),
             cookie_secret=settings.get('SECRET_KEY'),
             compiled_template_cache=not settings.get('DEBUG'),
